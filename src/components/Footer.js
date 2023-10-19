@@ -5,7 +5,7 @@ export default class Main extends React.Component {
     return (
       <footer className="footer">
         <p className="copyright">
-          &copy; <span className="footer__year">2021</span> Around the U.S.
+          &copy; <span className="footer__year">{document.querySelector(".footer__year").textContent = new Date().getFullYear()}</span> Around the U.S.
         </p>
       </footer>
     );
