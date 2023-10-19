@@ -2,6 +2,8 @@ import addIcon from "../images/Vectorplus.svg";
 import editIcon from "../images/Vectoredit.svg";
 
 import Card from "./Card.js";
+import Footer from "./Footer";
+import Header from "./Header";
 
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import { useContext } from 'react';
@@ -11,6 +13,7 @@ export default function Main(props) {
 
   return (
     <>
+      <Header />
       <main className="content">
         <section className="profile">
           <img
@@ -59,6 +62,7 @@ export default function Main(props) {
           </ul>
         </section>
       </main>
+      <Footer />
     </>
   );
 }
