@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import EditProfilePopup from "./EditProfilePopup.js";
-import EditAvatarPopup from "./EditAvatarPopup.js";
-import ImagePopup from "./ImagePopup.js";
-import Header from "./Header.js";
-import Main from "./Main.js";
-import Footer from "./Footer.js";
+import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
+import ImagePopup from "./ImagePopup";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
+import Login from "./Login";
+import Register from "./Register";
 
-import api from '../utils/api.js';
+import api from "../utils/api";
 
-import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
-import AddPlacePopup from './AddPlacePopup.js';
-
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import AddPlacePopup from "./AddPlacePopup";
 
 export default function App(props) {
   const [cards, setCards] = useState([]);
@@ -56,7 +58,7 @@ export default function App(props) {
   function handleAddPlaceSubmit(cardName, cardLink) {
     api.addNewCard(cardName, cardLink).then((newCard) => {
       setCards([newCard, ...cards]);
-    })
+    });
     closeAllPopups();
   }
 
@@ -66,12 +68,12 @@ export default function App(props) {
     setIsAddPlacePopupOpen(false);
     setIsImagePopupOpen(false);
   }
-  
+
   function handleCardLike(card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
 
     api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
-      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+      setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
     });
   }
 
@@ -93,46 +95,67 @@ export default function App(props) {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="container">
-        <div className={`container__semitransparent 
-        ${isImagePopupOpen || 
-        isEditAvatarPopupOpen || 
-        isEditProfilePopupOpen || 
-        isAddPlacePopupOpen ? 'container__semitransparent_active' : ''}`}></div>
+        <div
+          className={`container__semitransparent 
+        ${
+          isImagePopupOpen ||
+          isEditAvatarPopupOpen ||
+          isEditProfilePopupOpen ||
+          isAddPlacePopupOpen
+            ? "container__semitransparent_active"
+            : ""
+        }`}
+        ></div>
 
         <div className="page">
           <Header />
 
-          <Main
-            currentUser={currentUser}
-            cards={cards}
-            onEditProfileClick={handleEditProfileClick}
-            onEditAvatarClick={handleEditAvatarClick}
-            isAddPlacePopupClick={handleAddPlaceClick}
-            handleCardLike={handleCardLike}
-            handleDeleteCard={handleDeleteCard}
-            onCardClick={handleCardClick}
-          />
-
+          <Routes>
+            <Route path="/signin" element={<Login />}></Route>
+            <Route path="/signup" element={<Register />}></Route>
+            <Route
+              path="/home"
+              element={
+                <Main
+                  currentUser={currentUser}
+                  cards={cards}
+                  onEditProfileClick={handleEditProfileClick}
+                  onEditAvatarClick={handleEditAvatarClick}
+                  isAddPlacePopupClick={handleAddPlaceClick}
+                  handleCardLike={handleCardLike}
+                  handleDeleteCard={handleDeleteCard}
+                  onCardClick={handleCardClick}
+                />
+              }
+            ></Route>
+            <Route
+              exact path="/"
+              element={
+                <Navigate to="/signin" />
+              }
+            ></Route>
+          </Routes>
+          
           <Footer />
         </div>
 
-        <EditProfilePopup 
-          isOpen={isEditProfilePopupOpen} 
+        <EditProfilePopup
+          isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUser}
-        />       
+        />
 
-        <AddPlacePopup 
-          isOpen={isAddPlacePopupOpen} 
+        <AddPlacePopup
+          isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
           onAddPlaceSubmit={handleAddPlaceSubmit}
-        />       
+        />
 
-        <EditAvatarPopup 
-          isOpen={isEditAvatarPopupOpen} 
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
           onUpdateAvatar={handleUpdateAvatar}
-        /> 
+        />
 
         <ImagePopup
           card={selectedCard}
