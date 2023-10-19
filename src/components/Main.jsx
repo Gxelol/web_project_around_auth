@@ -1,7 +1,7 @@
 import addIcon from "../images/Vectorplus.svg";
 import editIcon from "../images/Vectoredit.svg";
 
-import Card from "./Card.js";
+import Card from "./Card";
 import Footer from "./Footer";
 import Header from "./Header";
 
