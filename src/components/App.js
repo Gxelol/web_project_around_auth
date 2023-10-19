@@ -4,9 +4,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import ImagePopup from "./ImagePopup";
-import Header from "./Header";
 import Main from "./Main";
-import Footer from "./Footer";
 import Login from "./Login";
 import Register from "./Register";
 
@@ -108,8 +106,6 @@ export default function App(props) {
         ></div>
 
         <div className="page">
-          <Header />
-
           <Routes>
             <Route path="/signin" element={<Login />}></Route>
             <Route path="/signup" element={<Register />}></Route>
@@ -117,7 +113,7 @@ export default function App(props) {
               path="/home"
               element={
                 <Main
-                  currentUser={currentUser}
+                currentUser={currentUser}
                   cards={cards}
                   onEditProfileClick={handleEditProfileClick}
                   onEditAvatarClick={handleEditAvatarClick}
@@ -135,8 +131,6 @@ export default function App(props) {
               }
             ></Route>
           </Routes>
-          
-          <Footer />
         </div>
 
         <EditProfilePopup
