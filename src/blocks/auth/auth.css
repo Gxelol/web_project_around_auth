@@ -9,3 +9,11 @@
   background-color: #000000;
   border-radius: 10px;
 }
+
+@media screen and (max-width: 680px) {
+  .auth {
+    width: 70%;
+    height: 322px;
+    left: 15%;
+  }
+}
