@@ -22,10 +22,21 @@ This project is a demonstration of a React application implementing user registr
    # or
    yarn install
 
-Usage:
+3. Start the development server:
+
+  ```bash
+   npm start
+   # or
+   yarn start
+
+2. Access the application in your web browser at http://localhost:3000.
+
+## Usage:
+
 Customize the React components and authentication logic to fit your project's requirements.
 
 Ensure to secure the backend API for a production environment and follow best practices for JWT security.
 
-Author:
+## Author:
+
 Gabriel Gonçalves
