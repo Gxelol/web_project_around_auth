@@ -24,10 +24,10 @@ This project is a demonstration of a React application implementing user registr
 
 3. Start the development server:
 
-  ```bash
-   npm start
+   ```bash
+   npm install
    # or
-   yarn start
+   yarn install
 
 
 4. Access the application in your web browser at http://localhost:3000.
