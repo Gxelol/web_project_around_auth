@@ -13,7 +13,13 @@ export default function Main(props) {
 
   return (
     <>
-      <Header />
+      <Header
+        pathTo={'/signin'}
+        registerLoginLink="Sair"
+        loggedIn={props.loggedIn}
+        onLogout={props.handleLogout}
+        email={props.email}
+      />
       <main className="content">
         <section className="profile">
           <img
