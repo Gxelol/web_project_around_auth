@@ -11,9 +11,14 @@ export default function Main(props) {
             <sup>The U.S.</sup>
           </sup>
         </h2>
-        <NavLink className="header__link" to={props.pathTo}>
-          {props.registerLoginLink}
-        </NavLink>
+        <div className='header__settings'>
+          <p className='header__user-email'>
+            {props.loggedIn ? props.email : ''}
+          </p>
+          <NavLink className="header__link" to={props.pathTo} onClick={props.onLogout}>
+            {props.registerLoginLink}
+          </NavLink>
+        </div>
       </div>
       <div className="header__line"></div>
     </header>
