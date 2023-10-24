@@ -9,10 +9,15 @@ export default function UserDataForm(props) {
           className={`auth__form`}
           name={props.formName}
           noValidate
+          onSubmit={props.handleSubmit}
         >
           <fieldset className="auth__set">
             {props.children}
-            <button type="button" className={`auth__submit`}>
+            <button 
+            type="button" 
+            className={`auth__submit`}
+            onClick={props.handleSubmit}
+            >
               {props.buttonText}
             </button>
             <NavLink className='auth__link' to={props.pathTo}>{props.linkText}</NavLink> 
