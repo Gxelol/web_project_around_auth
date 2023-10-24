@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Redirect, Route, Switch, withRouter, useHistory } from "react-router-dom";
 
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
@@ -7,20 +7,38 @@ import ImagePopup from "./ImagePopup";
 import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
+import ProtectedRoute from "./ProtectedRoute";
+import AddPlacePopup from "./AddPlacePopup";
+import InfoTooltip from "./InfoTooltip";
 
 import api from "../utils/api";
+import { checkToken } from "../utils/auth";
 
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import AddPlacePopup from "./AddPlacePopup";
 
-export default function App(props) {
+function App(props) {
+  //CARD
   const [cards, setCards] = useState([]);
+  const [selectedCard, setSelectedCard] = useState();
+
+  //POPUP
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
+
+  //USER
   const [currentUser, setCurrentUser] = useState({});
-  const [selectedCard, setSelectedCard] = useState();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [email, setEmail] = useState("");
+
+  //TOOLTIP
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
+  const [tooltipMessage, setTooltipMessage] = useState("");
+
+  //NAVIGATE
+  const navigate = useHistory();
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
@@ -67,6 +85,10 @@ export default function App(props) {
     setIsImagePopupOpen(false);
   }
 
+  function closeTooltip() {
+    setIsTooltipOpen(false);
+  }
+
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
 
@@ -75,9 +97,33 @@ export default function App(props) {
     });
   }
 
+  useEffect(() => {
+    function handleTokenCheck() {
+      if (localStorage.getItem("jwt")) {
+        const jwt = localStorage.getItem("jwt");
+        checkToken(jwt).then((res) => {
+          if (res) {
+            setEmail(res.data.email);
+            setLoggedIn(true);
+            navigate.push("/home");
+          } else {
+            setLoggedIn(false);
+          }
+        });
+      }
+    }
+
+    handleTokenCheck();
+  }, [navigate]);
+
   function handleDeleteCard(card) {
     api.deleteCard(card._id);
     setCards((state) => state.filter((c) => c._id !== card._id));
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('jwt');
+    setLoggedIn(false);
   }
 
   useEffect(() => {
@@ -99,22 +145,41 @@ export default function App(props) {
           isImagePopupOpen ||
           isEditAvatarPopupOpen ||
           isEditProfilePopupOpen ||
-          isAddPlacePopupOpen
+          isAddPlacePopupOpen ||
+          isTooltipOpen
             ? "container__semitransparent_active"
             : ""
         }`}
         ></div>
 
         <div className="page">
-          <Routes>
-            <Route path="/signin" element={<Login />}></Route>
-            <Route path="/signup" element={<Register />}></Route>
-            <Route
-              path="/home"
-              element={
+          <Switch>
+            <Route path="/signin">
+              <Login
+              setEmail={setEmail}
+                setLoggedIn={setLoggedIn}
+                setIsTooltipOpen={setIsTooltipOpen}
+                setTooltipMessage={setTooltipMessage}
+                setSuccess={setSuccess}
+              />
+            </Route>
+
+            <Route path="/signup">
+              <Register
+                setIsTooltipOpen={setIsTooltipOpen}
+                setTooltipMessage={setTooltipMessage}
+                setSuccess={setSuccess}
+              />
+            </Route>
+
+            <Route path="/home">
+              <ProtectedRoute loggedIn={loggedIn}>
                 <Main
-                currentUser={currentUser}
+                  email={email}
+                  handleLogout={handleLogout}
+                  currentUser={currentUser}
                   cards={cards}
+                  loggedIn={loggedIn}
                   onEditProfileClick={handleEditProfileClick}
                   onEditAvatarClick={handleEditAvatarClick}
                   isAddPlacePopupClick={handleAddPlaceClick}
@@ -122,16 +187,21 @@ export default function App(props) {
                   handleDeleteCard={handleDeleteCard}
                   onCardClick={handleCardClick}
                 />
-              }
-            ></Route>
-            <Route
-              exact path="/"
-              element={
-                <Navigate to="/signin" />
-              }
-            ></Route>
-          </Routes>
+              </ProtectedRoute>
+            </Route>
+
+            <Route exact path="/">
+              {loggedIn ? <Redirect to="/home" /> : <Redirect to="/signin" />}
+            </Route>
+          </Switch>
         </div>
+
+        <InfoTooltip
+          isSuccess={isSuccess}
+          isOpen={isTooltipOpen}
+          onClose={closeTooltip}
+          tooltipMessage={tooltipMessage}
+        />
 
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
@@ -160,3 +230,5 @@ export default function App(props) {
     </CurrentUserContext.Provider>
   );
 }
+
+export default withRouter(App);
